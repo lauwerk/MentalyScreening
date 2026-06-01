@@ -800,20 +800,6 @@ function onAgeChange() {
   checkIntake();
 }
 
-function setSex(s) {
-  childSex = s;
-  ['m','f','d'].forEach(x => document.getElementById(`sex-${x}`).classList.remove('active'));
-  document.getElementById(`sex-${s}`).classList.add('active');
-  checkIntake();
-}
-
-function setRole(r) {
-  raterRole = r;
-  ['parent','pro'].forEach(x => document.getElementById(`role-${x}`).classList.remove('active'));
-  document.getElementById(`role-${r}`).classList.add('active');
-  checkIntake();
-}
-
 function checkIntake() {
   childName = document.getElementById('child-name').value.trim();
   const ok = childName && childAge && childSex && raterRole;
@@ -840,13 +826,25 @@ function wireIntake() {
   const intake = document.getElementById('intake');
   if (!intake) return;
 
-  // Single delegated click handler for ALL intake buttons
+  // Single delegated click handler for ALL intake buttons.
+  // Active-toggling uses closest('.role-group') so sex and role groups
+  // are always isolated — clicking one group never touches the other.
   intake.addEventListener('click', (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
-    if (btn.dataset.sex)  { setSex(btn.dataset.sex); }
-    else if (btn.dataset.role) { setRole(btn.dataset.role); }
-    else if (btn.id === 'start-btn' && !btn.disabled) { startQuiz(); }
+    if (btn.dataset.sex) {
+      childSex = btn.dataset.sex;
+      btn.closest('.role-group').querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      checkIntake();
+    } else if (btn.dataset.role) {
+      raterRole = btn.dataset.role;
+      btn.closest('.role-group').querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      checkIntake();
+    } else if (btn.id === 'start-btn' && !btn.disabled) {
+      startQuiz();
+    }
   });
 
   // Single delegated input handler for the text/number fields
