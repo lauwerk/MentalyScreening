@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinder-Screening ADHS & Autismus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #f5f2ec;
+  --s1:      #edeae2;
+  --s2:      #e4e0d6;
+  --border:  #d4cfc3;
+  --border2: #bfb9aa;
+  --text:    #2a2520;
+  --muted:   #7a7060;
+  --dim:     #b0a898;
+  --radius:  10px;
+
+  --adhs:    #c8521a;
+  --asd:     #2a7abf;
+  --adhs-lt: rgba(200,82,26,0.1);
+  --asd-lt:  rgba(42,122,191,0.1);
+
+  --sub-aufm: #d4720a;
+  --sub-hyp:  #c84040;
+  --sub-imp:  #b03080;
+  --sub-soz:  #2a8a6a;
+  --sub-kom:  #2060b0;
+  --sub-ver:  #6040a8;
+  --sub-sin:  #208878;
+}
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(200,82,26,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 20% 90%, rgba(42,122,191,0.05) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+.wrap {
+  max-width: 820px; margin: 0 auto;
+  padding: 52px 24px 100px;
+  position: relative; z-index: 1;
+}
+
+/* ── HEADER ── */
+.hdr { margin-bottom: 48px; padding-bottom: 32px; border-bottom: 2px solid var(--border2); }
+.hdr-chips { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.hdr-chip {
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 99px; border: 1px solid;
+}
+.chip-adhs { color: var(--adhs); border-color: var(--adhs); background: var(--adhs-lt); }
+.chip-asd  { color: var(--asd);  border-color: var(--asd);  background: var(--asd-lt);  }
+.chip-info { color: var(--muted); border-color: var(--border2); }
+
+h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(28px,5vw,46px);
+  font-weight: 400; line-height: 1.1;
+  letter-spacing: -0.02em; margin-bottom: 14px; color: var(--text);
+}
+h1 i { font-style: italic; color: var(--adhs); }
+h1 span { color: var(--asd); }
+
+.hdr-sub { font-size: 11px; color: var(--muted); line-height: 1.8; max-width: 560px; margin-bottom: 18px; }
+.disc {
+  padding: 12px 16px;
+  background: rgba(200,82,26,0.07);
+  border: 1px solid rgba(200,82,26,0.2);
+  border-radius: 8px; font-size: 10px;
+  color: var(--adhs); line-height: 1.65;
+}
+
+/* ── INTAKE CARD ── */
+.intake {
+  background: var(--s1); border: 2px solid var(--border2);
+  border-radius: var(--radius); padding: 28px;
+  margin-bottom: 36px;
+}
+.intake-title {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); padding-bottom: 10px;
+}
+.intake-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media(max-width: 520px) { .intake-grid { grid-template-columns: 1fr; } }
+
+.field-label {
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px; display: block;
+}
+.field-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 7px; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--text); outline: none;
+  transition: border-color 0.15s;
+}
+.field-input:focus { border-color: var(--adhs); }
+
+.role-group { display: flex; gap: 8px; }
+.role-btn {
+  flex: 1; padding: 10px 12px;
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 7px; font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer; transition: all 0.15s;
+  text-align: center;
+}
+.role-btn:hover { border-color: var(--border2); color: var(--text); }
+.role-btn.active {
+  background: var(--adhs-lt); border-color: var(--adhs); color: var(--adhs);
+}
+
+.age-display {
+  font-family: 'Lora', serif; font-size: 22px;
+  color: var(--adhs); margin-top: 6px;
+  min-height: 28px;
+}
+.age-band {
+  font-size: 9px; letter-spacing: 0.1em;
+  color: var(--muted); margin-top: 4px;
+}
+
+.intake-start-btn {
+  margin-top: 22px; width: 100%;
+  padding: 13px; background: var(--adhs); color: #fff;
+  border: none; border-radius: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; cursor: pointer;
+  transition: all 0.2s;
+}
+.intake-start-btn:hover { filter: brightness(1.1); }
+.intake-start-btn:disabled { opacity: 0.35; cursor: not-allowed; filter: none; }
+
+/* ── PROGRESS ── */
+.prog-wrap {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--bg);
+  padding: 10px 0 12px;
+  border-bottom: 1px solid var(--border); margin-bottom: 4px;
+  display: none;
+}
+.prog-meta {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--dim);
+  margin-bottom: 6px; letter-spacing: 0.1em;
+}
+.prog-meta span:last-child { color: var(--adhs); }
+.prog-track { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.prog-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--adhs), var(--asd));
+  border-radius: 99px; transition: width 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── SECTION ── */
+.section { margin-bottom: 52px; }
+.sec-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sec-stripe { width: 4px; height: 36px; border-radius: 99px; flex-shrink: 0; }
+.sec-info { flex: 1; }
+.sec-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.sec-title { font-family: 'Lora', serif; font-size: 18px; color: var(--text); margin-top: 2px; }
+.sec-sub { font-size: 10px; color: var(--dim); margin-top: 2px; }
+
+/* ── QUESTION CARD ── */
+.qcard {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 20px 18px;
+  margin-bottom: 12px; position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+.qcard.done { background: #fff; border-color: var(--border2); }
+.qcard-meta {
+  display: flex; gap: 8px; align-items: center;
+  margin-bottom: 10px;
+}
+.qcard-num { font-size: 9px; color: var(--dim); letter-spacing: 0.08em; }
+.qcard-sub {
+  font-size: 9px; padding: 2px 7px; border-radius: 99px;
+  border: 1px solid; letter-spacing: 0.08em;
+}
+.qtext {
+  font-family: 'Lora', serif; font-size: 15px;
+  font-weight: 400; line-height: 1.55; margin-bottom: 6px;
+}
+.qtext-pro { font-size: 13px; font-style: italic; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+.qhint { font-size: 10px; color: var(--dim); margin-bottom: 14px; line-height: 1.5; }
+
+/* ── FREQUENCY BUTTONS ── */
+.freq-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 5px; }
+@media(max-width:500px) { .freq-row { grid-template-columns:1fr 1fr; } }
+
+.fq {
+  padding: 9px 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px; background: var(--bg);
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.07em;
+  text-align: center; cursor: pointer;
+  transition: all 0.13s; line-height: 1.4;
+}
+.fq-dot {
+  display: block; width: 5px; height: 5px;
+  border-radius: 50%; background: currentColor;
+  margin: 0 auto 5px; opacity: 0.35;
+  transition: opacity 0.13s;
+}
+.fq:hover { border-color: var(--border2); color: var(--text); }
+.fq.on-adhs { background: var(--adhs-lt); border-color: var(--adhs); color: var(--adhs); }
+.fq.on-adhs .fq-dot { opacity: 1; }
+.fq.on-asd  { background: var(--asd-lt);  border-color: var(--asd);  color: var(--asd);  }
+.fq.on-asd  .fq-dot { opacity: 1; }
+
+/* ── SLIDER ── */
+.sld-wrap { padding: 2px 0; }
+.sld-labels {
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: var(--dim); margin-bottom: 9px; letter-spacing: 0.05em;
+}
+input[type=range] {
+  width: 100%; appearance: none;
+  height: 3px; background: var(--border);
+  border-radius: 99px; outline: none; cursor: pointer;
+}
+input[type=range].adhs-sld::-webkit-slider-thumb {
+  appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--adhs); border: 3px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--adhs); cursor: pointer; transition: transform 0.13s;
+}
+input[type=range].asd-sld::-webkit-slider-thumb {
+  appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--asd); border: 3px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--asd); cursor: pointer; transition: transform 0.13s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.sld-val { text-align: center; font-size: 10px; margin-top: 7px; letter-spacing: 0.1em; min-height: 16px; }
+
+/* ── SUBMIT ── */
+.sub-area { margin-top: 48px; text-align: center; }
+.sub-btn {
+  padding: 14px 48px; background: var(--adhs); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+}
+.sub-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.sub-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; filter: none; }
+.sub-hint { font-size: 10px; color: var(--dim); margin-top: 10px; letter-spacing: 0.08em; }
+
+/* ── RESULTS ── */
+#results { display: none; animation: fadeUp 0.5s ease forwards; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+.res-hdr {
+  border-bottom: 2px solid var(--border2);
+  padding-bottom: 28px; margin-bottom: 36px;
+}
+.res-eyebrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.res-name {
+  font-family: 'Lora', serif; font-size: clamp(24px,4vw,36px);
+  font-weight: 400; margin-bottom: 6px;
+}
+.res-meta { font-size: 11px; color: var(--muted); line-height: 1.7; }
+
+/* Big score blocks */
+.big-scores { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px; }
+@media(max-width:500px) { .big-scores { grid-template-columns: 1fr; } }
+
+.big-score-card {
+  border-radius: var(--radius); padding: 24px;
+  position: relative; overflow: hidden;
+}
+.big-score-card.adhs-card { background: var(--adhs-lt); border: 2px solid rgba(200,82,26,0.25); }
+.big-score-card.asd-card  { background: var(--asd-lt);  border: 2px solid rgba(42,122,191,0.25); }
+
+.bsc-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.bsc-score { font-family: 'Lora', serif; font-size: 52px; line-height: 1; margin-bottom: 4px; }
+.bsc-score.adhs-score { color: var(--adhs); }
+.bsc-score.asd-score  { color: var(--asd);  }
+.bsc-unit { font-size: 11px; color: var(--muted); }
+.bsc-level {
+  display: inline-block; margin-top: 8px;
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 99px; border: 1px solid;
+}
+.bsc-verdict { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+
+/* Age note */
+.age-note {
+  background: var(--s1); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 16px 20px;
+  margin-bottom: 28px; font-size: 11px; line-height: 1.7; color: var(--muted);
+}
+.age-note strong { color: var(--text); }
+
+/* Subscale bars */
+.sub-section { margin-bottom: 36px; }
+.sub-sec-title {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 16px;
+  border-bottom: 1px solid var(--border); padding-bottom: 8px;
+}
+.sub-row {
+  display: grid; grid-template-columns: 160px 1fr 48px;
+  gap: 14px; align-items: center; margin-bottom: 10px;
+}
+@media(max-width:480px) { .sub-row { grid-template-columns: 1fr; gap: 4px; } }
+.sub-name { font-size: 10px; color: var(--muted); }
+.sub-track { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.sub-fill  { height: 100%; border-radius: 99px; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+.sub-pct   { font-size: 10px; color: var(--muted); text-align: right; }
+
+/* Summary table */
+.sum-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 11px; margin-bottom: 32px;
+}
+.sum-table th {
+  text-align: left; padding: 8px 12px;
+  border-bottom: 1px solid var(--border2);
+  font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); font-weight: 400;
+}
+.sum-table td {
+  padding: 9px 12px; border-bottom: 1px solid var(--border);
+  color: var(--muted); vertical-align: middle;
+}
+.sum-table td:first-child { color: var(--text); }
+
+/* Action buttons */
+.act-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.btn-pdf {
+  padding: 12px 26px; background: var(--adhs); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; cursor: pointer; transition: all 0.2s;
+}
+.btn-pdf:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-restart {
+  padding: 12px 26px; background: transparent; color: var(--muted);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; cursor: pointer; transition: all 0.2s;
+}
+.btn-restart:hover { border-color: var(--muted); color: var(--text); }
+
+/* ── PRINT ── */
+@media print {
+  @page { margin: 14mm 16mm; size: A4; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  body { background: #fff !important; color: #111 !important; }
+  body::before { display: none; }
+  .wrap { max-width: 100%; padding: 0; }
+  .hdr, #quiz, .prog-wrap, .intake { display: none !important; }
+  #results { display: block !important; }
+
+  .print-only { display: block !important; }
+  .no-print { display: none !important; }
+
+  .res-hdr { border-bottom: 2px solid #111; padding-bottom: 14px; margin-bottom: 20px; }
+  .res-name { font-size: 22px !important; }
+  .res-eyebrow { color: #555 !important; }
+  .res-meta { color: #444 !important; }
+
+  .big-scores { gap: 10px !important; margin-bottom: 20px !important; }
+  .big-score-card { padding: 14px 16px !important; }
+  .big-score-card.adhs-card { background: #fff7f4 !important; border-color: rgba(200,82,26,0.3) !important; }
+  .big-score-card.asd-card  { background: #f4f8ff !important; border-color: rgba(42,122,191,0.3) !important; }
+  .bsc-score { font-size: 36px !important; }
+  .bsc-verdict { color: #333 !important; }
+
+  .age-note { background: #f8f8f8 !important; border-color: #ccc !important; color: #333 !important; }
+  .age-note strong { color: #111 !important; }
+
+  .sub-track { background: #e0e0e0 !important; }
+  .sub-name { color: #444 !important; }
+  .sub-pct { color: #444 !important; }
+
+  .sum-table th { color: #555 !important; }
+  .sum-table td { color: #444 !important; }
+  .sum-table td:first-child { color: #111 !important; }
+
+  .qa-section { display: block !important; }
+  .qa-sec-hdr {
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #555; border-bottom: 1px solid #ddd;
+    padding-bottom: 5px; margin: 16px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .qa-item {
+    padding: 6px 0; border-bottom: 1px solid #eee;
+    display: grid; grid-template-columns: 1fr 130px;
+    gap: 12px; align-items: start; page-break-inside: avoid;
+  }
+  .qa-q { font-size: 9px; color: #333; line-height: 1.5; }
+  .qa-a { font-size: 9px; color: #111; text-align: right; font-weight: 500; }
+  .qa-bar { height: 3px; background: #e0e0e0; border-radius: 99px; margin-top: 3px; overflow: hidden; }
+  .qa-bar-fill { height: 100%; border-radius: 99px; }
+
+  .print-disc {
+    display: block !important; margin-top: 18px;
+    padding: 8px 12px; background: #fff5f5 !important;
+    border: 1px solid #f0a0a0; font-size: 8px;
+    color: #b04040 !important; line-height: 1.6;
+  }
+  .act-row { display: none !important; }
+}
+
+.print-only { display: none; }
+.qa-section { display: none; }
+.print-disc { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-chips">
+    <span class="hdr-chip chip-adhs">ADHS</span>
+    <span class="hdr-chip chip-asd">Autismus-Spektrum</span>
+    <span class="hdr-chip chip-info">Alter 2–8 Jahre</span>
+    <span class="hdr-chip chip-info">Eltern &amp; Fachkräfte</span>
+  </div>
+  <h1>Kinder-Screening<br><i>ADHS</i> &amp; <span>Autismus</span></h1>
+  <p class="hdr-sub">
+    Entwicklungsbasiertes Screening für Kinder von 2 bis 8 Jahren. Die Auswertung berücksichtigt
+    altersgemäße Entwicklungsnormen. Basis: M-CHAT-R, Conners EC, CBCL 1½–5 / 6–18, ADOS-2-Kriterien,
+    DSM-5 Entwicklungskriterien.
+  </p>
+  <div class="disc">⚠ Kein Diagnoseinstrument. Dieser Fragebogen ersetzt keine kinderpsychiatrische oder kinderpsychologische Diagnostik. Bei Auffälligkeiten bitte Kinderarzt, SPZ oder Kinder- und Jugendpsychiatrie aufsuchen.</div>
+</div>
+
+<!-- INTAKE -->
+<div class="intake" id="intake">
+  <div class="intake-title">Angaben zum Kind &amp; zur ausfüllenden Person</div>
+  <div class="intake-grid">
+    <div>
+      <label class="field-label">Vorname des Kindes</label>
+      <input class="field-input" id="child-name" type="text" placeholder="z.B. Lena">
+    </div>
+    <div>
+      <label class="field-label">Alter des Kindes</label>
+      <input class="field-input" id="child-age" type="number" min="2" max="8" placeholder="2 – 8 Jahre">
+      <div class="age-display" id="age-display"></div>
+      <div class="age-band" id="age-band"></div>
+    </div>
+    <div>
+      <label class="field-label">Geschlecht des Kindes</label>
+      <div class="role-group">
+        <button type="button" class="role-btn" id="sex-m" data-sex="m">Männlich</button>
+        <button type="button" class="role-btn" id="sex-f" data-sex="f">Weiblich</button>
+        <button type="button" class="role-btn" id="sex-d" data-sex="d">Divers</button>
+      </div>
+    </div>
+    <div>
+      <label class="field-label">Ihre Rolle</label>
+      <div class="role-group">
+        <button type="button" class="role-btn" id="role-parent" data-role="parent">Elternteil</button>
+        <button type="button" class="role-btn" id="role-pro" data-role="pro">Fachkraft</button>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="intake-start-btn" id="start-btn" disabled>
+    Fragebogen starten →
+  </button>
+  <div id="intake-status" style="margin-top:12px;font-size:10px;letter-spacing:0.06em;color:var(--muted);text-align:center;line-height:1.6;">
+    Bitte alle vier Felder ausfüllen.
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-wrap" id="prog-wrap">
+  <div class="prog-meta"><span>FORTSCHRITT</span><span id="prog-txt">0 / 0</span></div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz"></div>
+
+<!-- RESULTS -->
+<div id="results">
+  <!-- Print-only header -->
+  <div class="print-only" style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:16px;">
+    <div style="font-family:'Lora',serif;font-size:18px;">Kinder-Screening ADHS &amp; Autismus</div>
+    <div style="font-size:9px;color:#555;text-align:right;line-height:1.7;" id="print-meta"></div>
+  </div>
+
+  <div class="res-hdr">
+    <div class="res-eyebrow">Auswertung · Kinder-Screening</div>
+    <div class="res-name" id="res-name"></div>
+    <div class="res-meta" id="res-meta"></div>
+  </div>
+
+  <div class="age-note" id="age-note"></div>
+
+  <div class="big-scores">
+    <div class="big-score-card adhs-card">
+      <div class="bsc-label">ADHS-Screening</div>
+      <div class="bsc-score adhs-score" id="bsc-adhs">—</div>
+      <div class="bsc-unit">von 100 Punkten</div>
+      <div class="bsc-level" id="bsc-adhs-lv"></div>
+      <div class="bsc-verdict" id="bsc-adhs-vt"></div>
+    </div>
+    <div class="big-score-card asd-card">
+      <div class="bsc-label">Autismus-Spektrum-Screening</div>
+      <div class="bsc-score asd-score" id="bsc-asd">—</div>
+      <div class="bsc-unit">von 100 Punkten</div>
+      <div class="bsc-level" id="bsc-asd-lv"></div>
+      <div class="bsc-verdict" id="bsc-asd-vt"></div>
+    </div>
+  </div>
+
+  <!-- ADHS Subskalen -->
+  <div class="sub-section">
+    <div class="sub-sec-title">ADHS — Subskalen</div>
+    <div id="adhs-subs"></div>
+  </div>
+
+  <!-- ASD Subskalen -->
+  <div class="sub-section">
+    <div class="sub-sec-title">Autismus-Spektrum — Subskalen</div>
+    <div id="asd-subs"></div>
+  </div>
+
+  <!-- Summary table -->
+  <div class="sub-sec-title no-print" style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Gesamtübersicht</div>
+  <table class="sum-table">
+    <thead><tr>
+      <th>Subskala</th><th>Bereich</th><th>Score</th><th>Einschätzung</th>
+    </tr></thead>
+    <tbody id="sum-tbody"></tbody>
+  </table>
+
+  <!-- QA detail (print only) -->
+  <div class="qa-section" id="qa-section"></div>
+
+  <div class="print-disc">
+    ⚠ Kein Diagnoseinstrument. Klinische Diagnose ausschließlich durch Fachpersonal (Kinder- und Jugendpsychiatrie, SPZ, Kinderpsychologie).
+    Screening-Basis: M-CHAT-R, Conners EC, CBCL, ADOS-2-Kriterien, DSM-5 Entwicklungskriterien.
+    Erstellt: privat, lokal, nicht übertragen.
+  </div>
+
+  <div class="act-row">
+    <button class="btn-pdf" onclick="doPrint()">↓ Als PDF speichern</button>
+    <button class="btn-restart" onclick="doRestart()">↺ Neu starten</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<script>
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let childName = '', childAge = null, childSex = null, raterRole = null;
+const ans = {};
+let totalQ = 0;
+
+const FREQ = ['Nie / Fast nie','Selten','Manchmal','Oft','Sehr oft / Immer'];
+const FREQ_PRO = ['Nie beobachtet','Selten beobachtet','Gelegentlich','Häufig beobachtet','Fast immer'];
+
+// ── AGE BANDS ──
+// Returns 'a' (2-3), 'b' (4-5), 'c' (6-8)
+function ageBand(age) {
+  if (age <= 3) return 'a';
+  if (age <= 5) return 'b';
+  return 'c';
+}
+function ageBandLabel(age) {
+  if (age <= 3) return 'Altersband 2–3 Jahre (Kleinkind)';
+  if (age <= 5) return 'Altersband 4–5 Jahre (Vorschule)';
+  return 'Altersband 6–8 Jahre (Grundschule)';
+}
+
+// ══════════════════════════════════════════════════════
+// QUESTION DATA
+// Questions have: text, textPro (optional), sub, type ('freq'|'sld'), lo, hi
+// sub links to a subscale key
+// Some questions are age-gated: showBand: ['a','b'] means only show for those bands
+// ══════════════════════════════════════════════════════
+const ADHS_SUBS = {
+  aufm:  { label:'Aufmerksamkeit',         color:'#d4720a' },
+  hyp:   { label:'Hyperaktivität',          color:'#c84040' },
+  imp:   { label:'Impulsivität',            color:'#b03080' },
+};
+const ASD_SUBS = {
+  soz:   { label:'Soziale Interaktion',     color:'#2a8a6a' },
+  kom:   { label:'Kommunikation & Sprache', color:'#2060b0' },
+  ver:   { label:'Repetitives Verhalten',   color:'#6040a8' },
+  sin:   { label:'Sensorische Verarbeitung',color:'#208878' },
+};
+
+const ADHS_QS = [
+  // Aufmerksamkeit
+  {
+    text:    'Wie oft verliert das Kind bei Spielen oder Aufgaben schnell das Interesse und springt zu etwas anderem?',
+    textPro: 'Beobachtung: Aufmerksamkeitsdauer bei strukturierten Aufgaben im Vergleich zur Altersgruppe.',
+    sub: 'aufm', type: 'freq',
+  },
+  {
+    text:    'Wie oft scheint das Kind nicht zuzuhören, wenn man direkt mit ihm spricht?',
+    textPro: 'Reaktion auf direkte verbale Ansprache — zeigt das Kind Augenkontakt und Orientierungsreaktion?',
+    sub: 'aufm', type: 'freq',
+  },
+  {
+    text:    'Wie schwer fällt dem Kind das Befolgen einfacher Anweisungen (z.B. „Leg das Spielzeug hin")?',
+    textPro: 'Compliance bei altersgemäßen Ein- bis Zweischritt-Anweisungen.',
+    sub: 'aufm', type: 'freq',
+    hint: 'Altershinweis: Bis 3 Jahre sind maximal 1–2-Schritt-Anweisungen entwicklungsgemäß.',
+  },
+  {
+    text:    'Wie oft verliert das Kind wichtige Gegenstände (Spielzeug, Kleidungsstücke)?',
+    textPro: 'Häufigkeit von Objektverlust bei Gegenständen, die das Kind selbst benutzt.',
+    sub: 'aufm', type: 'freq',
+    showBand: ['b','c'],
+  },
+  {
+    text:    'Wie schwer fällt dem Kind, bei Spielen oder Aufgaben die Aufmerksamkeit aufrechtzuerhalten?',
+    textPro: 'Sustained attention im Vergleich zu gleichaltrigen Kindern.',
+    sub: 'aufm', type: 'sld', lo: 'Altersgemäß', hi: 'Deutlich kürzer',
+  },
+  // Hyperaktivität
+  {
+    text:    'Wie oft ist das Kind motorisch unruhig — zappelt, kann nicht ruhig sitzen, läuft ständig herum?',
+    textPro: 'Motorische Unruhe im Vergleich zur Altersgruppe und situativen Erwartungen.',
+    sub: 'hyp', type: 'freq',
+  },
+  {
+    text:    'Wie schwer fällt dem Kind ruhiges Spielen oder ruhige Beschäftigung?',
+    textPro: 'Fähigkeit zu ruhiger, selbstständiger Beschäftigung (altersangemessen).',
+    sub: 'hyp', type: 'freq',
+  },
+  {
+    text:    'Wie oft ist das Kind in Situationen übermäßig aktiv, in denen Ruhe erwartet wird (Essen, Vorlesen)?',
+    textPro: 'Kontextuelle Aktivitätskontrolle — Anpassung an situative Anforderungen.',
+    sub: 'hyp', type: 'freq',
+  },
+  {
+    text:    'Wie stark wirkt das Kind, als wäre es „von einem Motor angetrieben" — ständig in Bewegung?',
+    textPro: 'Allgemeines Aktivitätsniveau im Gesamteindruck.',
+    sub: 'hyp', type: 'sld', lo: 'Altersgemäß', hi: 'Extrem hoch',
+  },
+  // Impulsivität
+  {
+    text:    'Wie oft handelt das Kind, ohne nachzudenken — greift nach Dingen, rennt auf die Straße etc.?',
+    textPro: 'Impulsive Handlungen ohne erkennbare Hemmung oder Antizipation von Konsequenzen.',
+    sub: 'imp', type: 'freq',
+  },
+  {
+    text:    'Wie oft unterbricht das Kind andere oder kann nicht warten, bis es dran ist?',
+    textPro: 'Wartevermögen und Turn-Taking im sozialen Kontext.',
+    sub: 'imp', type: 'freq',
+  },
+  {
+    text:    'Wie oft reagiert das Kind mit starken Gefühlsausbrüchen auf kleine Frustrationen?',
+    textPro: 'Emotionale Regulationsfähigkeit bei Frustration / Versagen.',
+    sub: 'imp', type: 'freq',
+    hint: 'Altershinweis: Wutanfälle bis ca. 4 Jahre sind entwicklungsgemäß häufig.',
+  },
+  {
+    text:    'Wie schwer fällt dem Kind, auf eine Belohnung zu warten?',
+    textPro: 'Delay of gratification — altersgemäße Impulskontrolle.',
+    sub: 'imp', type: 'sld', lo: 'Wartet gut', hi: 'Kann kaum warten',
+    showBand: ['b','c'],
+  },
+];
+
+const ASD_QS = [
+  // Soziale Interaktion
+  {
+    text:    'Wie oft sucht das Kind spontan Blickkontakt beim Spielen oder Kommunizieren?',
+    textPro: 'Qualität und Spontaneität des gemeinsamen Blickkontakts (Joint Attention).',
+    sub: 'soz', type: 'freq', invert: true,
+    hint: 'Invertiert: "Nie" = auffällig, "Sehr oft" = unauffällig.',
+  },
+  {
+    text:    'Wie oft zeigt das Kind Dinge, um die Aufmerksamkeit anderer darauf zu lenken (Zeigen mit dem Finger)?',
+    textPro: 'Protodeklaratives Zeigen — Hinweisverhalten zur Aufmerksamkeitsteilung.',
+    sub: 'soz', type: 'freq', invert: true,
+  },
+  {
+    text:    'Wie schwer fällt dem Kind das gemeinsame Spielen mit anderen Kindern (Parallelspiel, kooperatives Spiel)?',
+    textPro: 'Entwicklungsgemäßes Sozialspiel — paralleles und kooperatives Spielverhalten.',
+    sub: 'soz', type: 'freq',
+  },
+  {
+    text:    'Wie oft reagiert das Kind auf seinen Namen, wenn es gerufen wird?',
+    textPro: 'Reaktion auf Namensruf ohne visuelle Hinweisreize.',
+    sub: 'soz', type: 'freq', invert: true,
+  },
+  {
+    text:    'Wie stark zeigt das Kind Interesse daran, mit anderen zu interagieren und Kontakt aufzunehmen?',
+    textPro: 'Soziale Motivation — spontane Kontaktaufnahme und soziales Interesse.',
+    sub: 'soz', type: 'sld', lo: 'Kaum Interesse', hi: 'Großes Interesse', invert: true,
+  },
+  // Kommunikation & Sprache
+  {
+    text:    'Wie gut entspricht die Sprachentwicklung des Kindes dem Altersstand?',
+    textPro: 'Sprachentwicklungsstand: Wortschatz, Satzkomplexität, Kommunikation im Altersvergleich.',
+    sub: 'kom', type: 'sld', lo: 'Stark verzögert', hi: 'Altersgemäß', invert: true,
+    hint: 'Meilensteine: 12 M: 1–2 Worte · 24 M: 2-Wort-Sätze · 36 M: 3-Wort-Sätze · 5 J: vollständige Sätze.',
+  },
+  {
+    text:    'Wie oft wiederholt das Kind Gehörtes wortwörtlich (Echolalie) ohne erkennbaren Sinn?',
+    textPro: 'Echolalie (unmittelbar oder verzögert) als Kommunikationsmuster.',
+    sub: 'kom', type: 'freq',
+  },
+  {
+    text:    'Wie gut versteht das Kind nonverbale Kommunikation (Gesten, Mimik, Tonfall)?',
+    textPro: 'Verständnis nonverbaler Kommunikation im Alltag.',
+    sub: 'kom', type: 'sld', lo: 'Kaum', hi: 'Gut', invert: true,
+    showBand: ['b','c'],
+  },
+  {
+    text:    'Wie oft nutzt das Kind Gesten (Winken, Zeigen, Nicken) zur Kommunikation?',
+    textPro: 'Einsatz konventioneller Gesten zur Kommunikation.',
+    sub: 'kom', type: 'freq', invert: true,
+  },
+  // Repetitives Verhalten
+  {
+    text:    'Wie oft zeigt das Kind stereotype Bewegungen (Schaukeln, Flattern mit den Händen, Drehen)?',
+    textPro: 'Selbststimulierende repetitive Motorik (Stimming).',
+    sub: 'ver', type: 'freq',
+  },
+  {
+    text:    'Wie stark besteht das Kind auf immer gleichen Abläufen oder Ritualen und reagiert mit starkem Stress auf Änderungen?',
+    textPro: 'Rigidität bezüglich Routinen — Distress bei Veränderung von Abläufen.',
+    sub: 'ver', type: 'sld', lo: 'Flexibel', hi: 'Sehr starr',
+  },
+  {
+    text:    'Wie oft beschäftigt sich das Kind ausschließlich mit einem sehr begrenzten Thema oder Gegenstand?',
+    textPro: 'Eingeschränkte Interessen — Intensität und Ausschließlichkeit im Altersvergleich.',
+    sub: 'ver', type: 'freq',
+    showBand: ['b','c'],
+  },
+  {
+    text:    'Wie stark ist das Spiel des Kindes repetitiv (immer gleiche Handlungsabläufe, kein Fantasiespiel)?',
+    textPro: 'Symbolspiel-Entwicklung — Verhältnis von funktionalem zu symbolischem Spiel.',
+    sub: 'ver', type: 'sld', lo: 'Kreativ/vielfältig', hi: 'Sehr repetitiv',
+  },
+  // Sensorisch
+  {
+    text:    'Wie stark reagiert das Kind über- oder unteremp­findlich auf Geräusche (Ohren zuhalten, kein Erschrecken)?',
+    textPro: 'Auditorische Verarbeitungsschwelle — Hyper- oder Hyposensitivität.',
+    sub: 'sin', type: 'sld', lo: 'Normal', hi: 'Stark abweichend',
+  },
+  {
+    text:    'Wie stark reagiert das Kind über- oder unterempfindlich auf Berührungen (Kleidung, Texturen, Körperkontakt)?',
+    textPro: 'Taktile Verarbeitungsschwelle — Vermeidung oder Suche nach taktilen Reizen.',
+    sub: 'sin', type: 'sld', lo: 'Normal', hi: 'Stark abweichend',
+  },
+  {
+    text:    'Wie oft sucht das Kind ungewöhnlich intensiv sensorische Reize (Drehen, Schaukeln, Lecken an Gegenständen)?',
+    textPro: 'Sensorisches Suchverhalten — Sensory Seeking im Beobachtungskontext.',
+    sub: 'sin', type: 'freq',
+  },
+];
+
+// Filter questions by age band
+function getActiveQuestions(qs, band) {
+  return qs.filter(q => !q.showBand || q.showBand.includes(band));
+}
+
+function qKey(type, idx) { return `${type}-${idx}`; }
+
+// ── INTAKE ──
+function onAgeChange() {
+  const v = parseInt(document.getElementById('child-age').value);
+  childAge = (v >= 2 && v <= 8) ? v : null;
+  const disp = document.getElementById('age-display');
+  const band = document.getElementById('age-band');
+  if (childAge) {
+    disp.textContent = `${childAge} Jahre`;
+    band.textContent = ageBandLabel(childAge);
+  } else {
+    disp.textContent = '';
+    band.textContent = '';
+  }
+  checkIntake();
+}
+
+function setSex(s) {
+  childSex = s;
+  ['m','f','d'].forEach(x => document.getElementById(`sex-${x}`).classList.remove('active'));
+  document.getElementById(`sex-${s}`).classList.add('active');
+  checkIntake();
+}
+
+function setRole(r) {
+  raterRole = r;
+  ['parent','pro'].forEach(x => document.getElementById(`role-${x}`).classList.remove('active'));
+  document.getElementById(`role-${r}`).classList.add('active');
+  checkIntake();
+}
+
+function checkIntake() {
+  childName = document.getElementById('child-name').value.trim();
+  const ok = childName && childAge && childSex && raterRole;
+  document.getElementById('start-btn').disabled = !ok;
+
+  // Live status feedback
+  const status = document.getElementById('intake-status');
+  if (status) {
+    const check = v => v ? '✓' : '○';
+    if (ok) {
+      status.style.color = 'var(--adhs)';
+      status.textContent = 'Alle Angaben vollständig — du kannst starten.';
+    } else {
+      status.style.color = 'var(--muted)';
+      status.textContent =
+        `${check(childName)} Name   ${check(childAge)} Alter   ${check(childSex)} Geschlecht   ${check(raterRole)} Rolle`;
+    }
+  }
+}
+
+// Robust event wiring via delegation on a stable parent.
+// Delegation survives any DOM timing issue and cannot be "reset" by re-binding.
+function wireIntake() {
+  const intake = document.getElementById('intake');
+  if (!intake) return;
+
+  // Single delegated click handler for ALL intake buttons
+  intake.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.dataset.sex)  { setSex(btn.dataset.sex); }
+    else if (btn.dataset.role) { setRole(btn.dataset.role); }
+    else if (btn.id === 'start-btn' && !btn.disabled) { startQuiz(); }
+  });
+
+  // Single delegated input handler for the text/number fields
+  intake.addEventListener('input', (e) => {
+    if (e.target.id === 'child-age') onAgeChange();
+    else if (e.target.id === 'child-name') checkIntake();
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', wireIntake);
+} else {
+  wireIntake();
+}
+
+// ── BUILD QUIZ ──
+function startQuiz() {
+  document.getElementById('intake').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'block';
+  buildQuiz();
+}
+
+function buildQuiz() {
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+  const band = ageBand(childAge);
+  const activeAdhs = getActiveQuestions(ADHS_QS, band);
+  const activeAsd  = getActiveQuestions(ASD_QS,  band);
+  totalQ = activeAdhs.length + activeAsd.length;
+  document.getElementById('prog-txt').textContent = `0 / ${totalQ}`;
+
+  // ADHS Section
+  const adhs_sec = buildSection('ADHS', 'Aufmerksamkeit & Hyperaktivität', 'Conners EC · CBCL · DSM-5', 'var(--adhs)', 'on-adhs', 'adhs', activeAdhs);
+  quiz.appendChild(adhs_sec);
+
+  // ASD Section
+  const asd_sec = buildSection('Autismus-Spektrum', 'Soziale Kommunikation & Verhalten', 'M-CHAT-R · ADOS-2 · DSM-5', 'var(--asd)', 'on-asd', 'asd', activeAsd);
+  quiz.appendChild(asd_sec);
+
+  // Submit
+  const sub = document.createElement('div');
+  sub.className = 'sub-area';
+  sub.innerHTML = `
+    <button class="sub-btn" id="sub-btn" onclick="showResults()" disabled>
+      Auswertung anzeigen →
+    </button>
+    <div class="sub-hint" id="sub-hint">Bitte alle ${totalQ} Fragen beantworten</div>
+  `;
+  quiz.appendChild(sub);
+  updateProgress();
+}
+
+function buildSection(label, title, ref, color, btnClass, typeKey, questions) {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+
+  const subs = typeKey === 'adhs' ? ADHS_SUBS : ASD_SUBS;
+
+  sec.innerHTML = `
+    <div class="sec-head">
+      <div class="sec-stripe" style="background:${color}"></div>
+      <div class="sec-info">
+        <div class="sec-label">${label}</div>
+        <div class="sec-title">${title}</div>
+        <div class="sec-sub">${ref}</div>
+      </div>
+    </div>
+  `;
+
+  questions.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.id = `qcard-${typeKey}-${qi}`;
+
+    const subInfo = subs[q.sub];
+    const subColor = subInfo ? subInfo.color : '#888';
+    const subLabel = subInfo ? subInfo.label : q.sub;
+
+    const proText = (raterRole === 'pro' && q.textPro)
+      ? `<div class="qtext-pro">Fachkraft-Kontext: ${q.textPro}</div>`
+      : '';
+    const hint = q.hint ? `<div class="qhint">ℹ ${q.hint}</div>` : '';
+    const invertNote = q.invert ? ` <span style="font-size:9px;opacity:0.6">(↑ = positiv)</span>` : '';
+
+    let ctrl = '';
+    if (q.type === 'freq') {
+      const labels = raterRole === 'pro' ? FREQ_PRO : FREQ;
+      ctrl = `<div class="freq-row">`;
+      labels.forEach((lbl, vi) => {
+        ctrl += `<button class="fq" data-type="${typeKey}" data-qi="${qi}" data-val="${vi}" onclick="setFreq(this,'${btnClass}')">
+          <span class="fq-dot"></span>${lbl}
+        </button>`;
+      });
+      ctrl += `</div>`;
+    } else {
+      const lo = q.lo || 'Min'; const hi = q.hi || 'Max';
+      const sldClass = typeKey === 'adhs' ? 'adhs-sld' : 'asd-sld';
+      ctrl = `<div class="sld-wrap">
+        <div class="sld-labels"><span>${lo}</span><span>${hi}${invertNote}</span></div>
+        <input type="range" id="sld-${typeKey}-${qi}" class="${sldClass}"
+          min="0" max="10" value="5"
+          oninput="setSld(this,'${typeKey}',${qi},'${color}')" style="background:var(--border)">
+        <div class="sld-val" id="sldv-${typeKey}-${qi}" style="color:${color}">— nicht beantwortet —</div>
+      </div>`;
+    }
+
+    card.innerHTML = `
+      <div class="qcard-meta">
+        <span class="qcard-num">${String(qi+1).padStart(2,'0')}</span>
+        <span class="qcard-sub" style="color:${subColor};border-color:${subColor}">${subLabel}</span>
+      </div>
+      <div class="qtext">${q.text}</div>
+      ${proText}${hint}${ctrl}
+    `;
+    sec.appendChild(card);
+  });
+
+  return sec;
+}
+
+function updateProgress() {
+  const n = Object.keys(ans).length;
+  document.getElementById('prog-txt').textContent = `${n} / ${totalQ}`;
+  document.getElementById('prog-fill').style.width = `${(n/totalQ)*100}%`;
+  const btn = document.getElementById('sub-btn');
+  if (!btn) return;
+  if (n >= totalQ) {
+    btn.disabled = false;
+    document.getElementById('sub-hint').textContent = 'Bereit zur Auswertung';
+  } else {
+    btn.disabled = true;
+    document.getElementById('sub-hint').textContent = `Noch ${totalQ - n} Frage(n) offen`;
+  }
+}
+
+function markDone(typeKey, qi) {
+  const c = document.getElementById(`qcard-${typeKey}-${qi}`);
+  if (c) c.classList.add('done');
+}
+
+function setFreq(btn, btnClass) {
+  const {type, qi, val} = btn.dataset;
+  document.querySelectorAll(`.fq[data-type="${type}"][data-qi="${qi}"]`)
+    .forEach(b => b.classList.remove('on-adhs','on-asd'));
+  btn.classList.add(btnClass);
+  ans[qKey(type, qi)] = parseInt(val);
+  markDone(type, qi);
+  updateProgress();
+}
+
+function setSld(input, typeKey, qi, color) {
+  const v = parseInt(input.value);
+  const pct = v / 10;
+  input.style.background = `linear-gradient(to right, ${color} ${pct*100}%, var(--border) ${pct*100}%)`;
+  document.getElementById(`sldv-${typeKey}-${qi}`).textContent = `${v} / 10`;
+  const prev = ans[qKey(typeKey, qi)];
+  ans[qKey(typeKey, qi)] = Math.round(pct * 4);
+  if (prev === undefined) markDone(typeKey, qi);
+  updateProgress();
+}
+
+// ── SCORING ──
+function scoreSubset(questions, typeKey, subKey) {
+  const band = ageBand(childAge);
+  const active = getActiveQuestions(questions, band);
+  const relevant = active.filter(q => q.sub === subKey);
+  let raw = 0, max = relevant.length * 4;
+  relevant.forEach((q, _) => {
+    const idx = active.indexOf(q);
+    let v = ans[qKey(typeKey, idx)] || 0;
+    if (q.invert) v = 4 - v;
+    raw += v;
+  });
+  return { raw, max, pct: max > 0 ? Math.round((raw/max)*100) : 0 };
+}
+
+function scoreTotal(questions, typeKey) {
+  const band = ageBand(childAge);
+  const active = getActiveQuestions(questions, band);
+  let raw = 0, max = active.length * 4;
+  active.forEach((q, idx) => {
+    let v = ans[qKey(typeKey, idx)] || 0;
+    if (q.invert) v = 4 - v;
+    raw += v;
+  });
+  return { raw, max, pct: max > 0 ? Math.round((raw/max)*100) : 0 };
+}
+
+// Age-adjusted thresholds
+// Young children (2-3) have higher motor activity, shorter attention — raise thresholds
+function adjustedLevel(pct, typeKey, band) {
+  let adj = pct;
+  if (band === 'a') adj = pct * 0.80; // more lenient for 2-3 year olds
+  if (band === 'b') adj = pct * 0.90;
+  return levelLabel(adj, typeKey);
+}
+
+function levelLabel(pct, typeKey) {
+  const t = typeKey === 'adhs'
+    ? { c1:25, c2:45, c3:65, c4:80 }
+    : { c1:20, c2:40, c3:60, c4:75 };
+  if (pct < t.c1) return { text:'Unauffällig',       col:'#3a8040' };
+  if (pct < t.c2) return { text:'Grenzwertig',        col:'#7a9030' };
+  if (pct < t.c3) return { text:'Leicht auffällig',   col:'#c09020' };
+  if (pct < t.c4) return { text:'Auffällig',          col:'#c06020' };
+  return               { text:'Stark auffällig',     col:'#b02020' };
+}
+
+const ADHS_VERDICTS = [
+  'Keine wesentlichen ADHS-Hinweise. Aufmerksamkeit und Aktivitätsniveau erscheinen altersgemäß.',
+  'Einzelne Merkmale erkennbar — noch im Grenzbereich. Entwicklungsbeobachtung empfehlenswert.',
+  'Mehrere ADHS-typische Verhaltensweisen. Kinderärztliche Vorstellung und Entwicklungsdiagnostik sinnvoll.',
+  'Deutliche ADHS-Symptomatik über mehrere Bereiche. Vorstellung beim SPZ oder Kinder- und Jugendpsychiatrie empfohlen.',
+  'Stark ausgeprägte ADHS-Symptomatik. Umgehende Fachdiagnostik dringend empfohlen.',
+];
+const ASD_VERDICTS = [
+  'Keine wesentlichen ASD-Hinweise. Soziale Kommunikation und Verhalten erscheinen altersgemäß.',
+  'Einzelne Merkmale beobachtbar — im Grenzbereich. Verlaufsbeobachtung empfehlenswert.',
+  'Mehrere ASD-typische Merkmale. Frühdiagnostik beim SPZ oder Kinder- und Jugendpsychiatrie sinnvoll.',
+  'Ausgeprägte ASD-Merkmale in mehreren Kernbereichen. Fachdiagnostik dringend empfohlen.',
+  'Stark ausgeprägte ASD-Symptomatik über alle Kernbereiche. Umgehende Fachdiagnostik notwendig.',
+];
+
+function verdictByPct(pct, arr) {
+  if (pct < 25) return arr[0];
+  if (pct < 45) return arr[1];
+  if (pct < 65) return arr[2];
+  if (pct < 80) return arr[3];
+  return arr[4];
+}
+
+const AGE_NOTES = {
+  a: `<strong>Altersband 2–3 Jahre:</strong> In dieser Entwicklungsphase sind kurze Aufmerksamkeitsspanne, motorische Unruhe und begrenzte Impulskontrolle entwicklungsnormal. Typische Sprach-Meilensteine: 2 Jahre → 50+ Wörter, 2-Wort-Sätze; 3 Jahre → 3-Wort-Sätze, 200+ Wörter. Die Auswertung berücksichtigt diese erhöhten Schwellenwerte. Ein erhöhter Score in diesem Alter sollte als Frühhinweis für Verlaufsbeobachtung verstanden werden.`,
+  b: `<strong>Altersband 4–5 Jahre (Vorschule):</strong> Kinder zeigen zunehmende Selbstregulation, ausgebaute Sprache und beginnende Peer-Interaktion. Symbolspiel und Regelspiele etablieren sich. Motorische Unruhe nimmt ab. Auswertung mit leicht angepassten Normwerten.`,
+  c: `<strong>Altersband 6–8 Jahre (Grundschule):</strong> Schuleintritt stellt neue Anforderungen an Aufmerksamkeit, Impulskontrolle und soziale Anpassung. ADHS-Symptome werden in diesem Kontext häufig erstmals klinisch relevant. Auswertung nach Schulalter-Normwerten.`,
+};
+
+function showResults() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = now.toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'});
+  const timeStr = now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  const stamp   = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}`;
+
+  document.getElementById('print-meta').innerHTML =
+    `Kind: ${childName} · Alter: ${childAge} J. · ${childSex === 'm' ? 'Männlich' : childSex === 'f' ? 'Weiblich' : 'Divers'}<br>
+     Ausfüllend: ${raterRole === 'parent' ? 'Elternteil/Erziehungsberechtigte' : 'Fachkraft'}<br>
+     Datum: ${dateStr} · ${timeStr} Uhr<br>Privat · Lokal · Nicht übertragen`;
+
+  const band = ageBand(childAge);
+  const sexLabel = childSex === 'm' ? 'männlich' : childSex === 'f' ? 'weiblich' : 'divers';
+  const roleLabel = raterRole === 'parent' ? 'Elternteil/Erziehungsberechtigte(r)' : 'Fachkraft';
+
+  document.getElementById('res-name').textContent = `${childName} — ${childAge} Jahre`;
+  document.getElementById('res-meta').innerHTML =
+    `Geschlecht: ${sexLabel} · ${ageBandLabel(childAge)}<br>
+     Ausgefüllt von: ${roleLabel} · ${dateStr}`;
+
+  document.getElementById('age-note').innerHTML = AGE_NOTES[band];
+
+  // Scores
+  const adhs = scoreTotal(ADHS_QS, 'adhs');
+  const asd  = scoreTotal(ASD_QS,  'asd');
+  const adhs_adj = adjustedLevel(adhs.pct, 'adhs', band);
+  const asd_adj  = adjustedLevel(asd.pct,  'asd',  band);
+
+  document.getElementById('bsc-adhs').textContent = adhs.pct;
+  document.getElementById('bsc-adhs-lv').textContent = adhs_adj.text;
+  document.getElementById('bsc-adhs-lv').style.cssText = `color:${adhs_adj.col};border-color:${adhs_adj.col}`;
+  document.getElementById('bsc-adhs-vt').textContent = verdictByPct(adhs.pct, ADHS_VERDICTS);
+
+  document.getElementById('bsc-asd').textContent = asd.pct;
+  document.getElementById('bsc-asd-lv').textContent = asd_adj.text;
+  document.getElementById('bsc-asd-lv').style.cssText = `color:${asd_adj.col};border-color:${asd_adj.col}`;
+  document.getElementById('bsc-asd-vt').textContent = verdictByPct(asd.pct, ASD_VERDICTS);
+
+  // ADHS Subscales
+  const adhs_sub_el = document.getElementById('adhs-subs');
+  adhs_sub_el.innerHTML = '';
+  const tbody = document.getElementById('sum-tbody');
+  tbody.innerHTML = '';
+
+  Object.entries(ADHS_SUBS).forEach(([key, info]) => {
+    const sc = scoreSubset(ADHS_QS, 'adhs', key);
+    const lv = levelLabel(sc.pct, 'adhs');
+    adhs_sub_el.innerHTML += `
+      <div class="sub-row">
+        <div class="sub-name">${info.label}</div>
+        <div class="sub-track"><div class="sub-fill" style="background:${info.color}" data-target="${sc.pct}"></div></div>
+        <div class="sub-pct">${sc.pct}%</div>
+      </div>`;
+    tbody.innerHTML += `<tr>
+      <td>${info.label}</td>
+      <td style="color:var(--adhs)">ADHS</td>
+      <td>${sc.pct}%</td>
+      <td style="color:${lv.col}">${lv.text}</td>
+    </tr>`;
+  });
+
+  const asd_sub_el = document.getElementById('asd-subs');
+  asd_sub_el.innerHTML = '';
+  Object.entries(ASD_SUBS).forEach(([key, info]) => {
+    const sc = scoreSubset(ASD_QS, 'asd', key);
+    const lv = levelLabel(sc.pct, 'asd');
+    asd_sub_el.innerHTML += `
+      <div class="sub-row">
+        <div class="sub-name">${info.label}</div>
+        <div class="sub-track"><div class="sub-fill" style="background:${info.color}" data-target="${sc.pct}"></div></div>
+        <div class="sub-pct">${sc.pct}%</div>
+      </div>`;
+    tbody.innerHTML += `<tr>
+      <td>${info.label}</td>
+      <td style="color:var(--asd)">Autismus</td>
+      <td>${sc.pct}%</td>
+      <td style="color:${lv.col}">${lv.text}</td>
+    </tr>`;
+  });
+
+  // QA Section for print
+  const qaSection = document.getElementById('qa-section');
+  qaSection.innerHTML = `<div style="font-family:'Lora',serif;font-size:15px;margin-bottom:12px;page-break-before:always;">Alle Fragen &amp; Antworten im Detail</div>`;
+
+  const buildQABlock = (questions, typeKey, color, title) => {
+    const band = ageBand(childAge);
+    const active = getActiveQuestions(questions, band);
+    const div = document.createElement('div');
+    div.innerHTML = `<div class="qa-sec-hdr"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color}"></span>${title}</div>`;
+    active.forEach((q, idx) => {
+      const rawVal = ans[qKey(typeKey, idx)] || 0;
+      const isFreq = q.type === 'freq';
+      const labels = (raterRole === 'pro' && isFreq) ? FREQ_PRO : FREQ;
+      const ansLabel = isFreq ? labels[rawVal] : `${Math.round(rawVal * 2.5)} / 10`;
+      const displayVal = q.invert ? (4 - rawVal) : rawVal;
+      const barPct = (displayVal / 4) * 100;
+      const item = document.createElement('div');
+      item.className = 'qa-item';
+      item.innerHTML = `
+        <div class="qa-q">${q.text}${q.invert ? ' ↑' : ''}</div>
+        <div class="qa-a">${ansLabel}
+          <div class="qa-bar"><div class="qa-bar-fill" style="width:${barPct}%;background:${color}"></div></div>
+        </div>`;
+      div.appendChild(item);
+    });
+    return div;
+  };
+
+  qaSection.appendChild(buildQABlock(ADHS_QS, 'adhs', 'var(--adhs)', `ADHS-Screening (${raterRole === 'pro' ? 'Fachkraft' : 'Eltern'})`));
+  qaSection.appendChild(buildQABlock(ASD_QS,  'asd',  'var(--asd)',  `Autismus-Spektrum-Screening (${raterRole === 'pro' ? 'Fachkraft' : 'Eltern'})`));
+
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(() => {
+    document.querySelectorAll('.sub-fill, .dis-bar-fill').forEach(el => {
+      el.style.width = el.dataset.target + '%';
+    });
+  }, 120);
+
+  // Store stamp for PDF filename
+  window._pdfStamp = stamp;
+  window._pdfChild = childName.replace(/\s+/g,'-');
+}
+
+function doPrint() {
+  document.querySelectorAll('.sub-fill').forEach(el => { el.style.width = el.dataset.target + '%'; });
+  const stamp = window._pdfStamp || 'export';
+  const child = window._pdfChild || 'Kind';
+  document.title = `Kinder-Screening_${child}_${stamp}`;
+  window.print();
+  setTimeout(() => { document.title = 'Kinder-Screening ADHS & Autismus'; }, 2000);
+}
+
+function doRestart() {
+  Object.keys(ans).forEach(k => delete ans[k]);
+  childName = ''; childAge = null; childSex = null; raterRole = null;
+  document.getElementById('child-name').value = '';
+  document.getElementById('child-age').value = '';
+  document.getElementById('age-display').textContent = '';
+  document.getElementById('age-band').textContent = '';
+  ['m','f','d'].forEach(x => document.getElementById(`sex-${x}`).classList.remove('active'));
+  ['parent','pro'].forEach(x => document.getElementById(`role-${x}`).classList.remove('active'));
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('intake').style.display = 'block';
+  document.getElementById('quiz').innerHTML = '';
+  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'none';
+  totalQ = 0;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
