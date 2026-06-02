@@ -492,19 +492,19 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
     <div>
       <label class="field-label">Geschlecht des Kindes</label>
       <div class="toggle-group">
-        <input type="radio" id="sex-m" name="sex" value="m" onchange="checkIntake()">
-        <label for="sex-m">Männlich</label>
-        <input type="radio" id="sex-f" name="sex" value="f" onchange="checkIntake()">
-        <label for="sex-f">Weiblich</label>
+        <input type="radio" id="sex-m" name="sex" value="m">
+        <label for="sex-m" onclick="childSex='m';checkIntake()">Männlich</label>
+        <input type="radio" id="sex-f" name="sex" value="f">
+        <label for="sex-f" onclick="childSex='f';checkIntake()">Weiblich</label>
       </div>
     </div>
     <div>
       <label class="field-label">Ihre Rolle</label>
       <div class="toggle-group">
-        <input type="radio" id="role-parent" name="role" value="parent" onchange="checkIntake()">
-        <label for="role-parent">Elternteil</label>
-        <input type="radio" id="role-pro" name="role" value="pro" onchange="checkIntake()">
-        <label for="role-pro">Fachkraft</label>
+        <input type="radio" id="role-parent" name="role" value="parent">
+        <label for="role-parent" onclick="raterRole='parent';checkIntake()">Elternteil</label>
+        <input type="radio" id="role-pro" name="role" value="pro">
+        <label for="role-pro" onclick="raterRole='pro';checkIntake()">Fachkraft</label>
       </div>
     </div>
   </div>
@@ -825,11 +825,9 @@ function onAgeChange() {
 function checkIntake() {
   childName = (document.getElementById('child-name').value || '').trim();
   var ageVal = parseInt(document.getElementById('child-age').value, 10);
-  if (ageVal >= 2 && ageVal <= 8) childAge = ageVal;
-  var sexEl  = document.querySelector('input[name="sex"]:checked');
-  var roleEl = document.querySelector('input[name="role"]:checked');
-  childSex  = sexEl  ? sexEl.value  : null;
-  raterRole = roleEl ? roleEl.value : null;
+  childAge = (ageVal >= 2 && ageVal <= 8) ? ageVal : null;
+  // childSex / raterRole werden direkt im onclick der Labels gesetzt (nicht per DOM gelesen,
+  // weil onchange auf Radio-Inputs in iOS-QuickLook-WebView nicht feuert)
   var ok = childName && childAge && childSex && raterRole;
   document.getElementById('start-btn').disabled = !ok;
   var status = document.getElementById('intake-status');
