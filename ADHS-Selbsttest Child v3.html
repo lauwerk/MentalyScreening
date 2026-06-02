@@ -119,6 +119,9 @@ h1 span { color: var(--asd); }
   font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--muted); cursor: pointer; transition: all 0.15s;
   text-align: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; -webkit-user-select: none;
 }
 .role-btn:hover { border-color: var(--border2); color: var(--text); }
 .role-btn.active {
@@ -458,31 +461,34 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
   <div class="intake-grid">
     <div>
       <label class="field-label">Vorname des Kindes</label>
-      <input class="field-input" id="child-name" type="text" placeholder="z.B. Lena">
+      <input class="field-input" id="child-name" type="text" placeholder="z.B. Lena"
+             oninput="checkIntake()" onchange="checkIntake()">
     </div>
     <div>
       <label class="field-label">Alter des Kindes</label>
-      <input class="field-input" id="child-age" type="text" inputmode="numeric" maxlength="1" placeholder="2 – 8" autocomplete="off">
+      <input class="field-input" id="child-age" type="text" inputmode="numeric"
+             maxlength="1" placeholder="2 – 8" autocomplete="off"
+             oninput="onAgeChange()" onchange="onAgeChange()">
       <div class="age-display" id="age-display"></div>
       <div class="age-band" id="age-band"></div>
     </div>
     <div>
       <label class="field-label">Geschlecht des Kindes</label>
-      <div class="role-group">
-        <button type="button" class="role-btn" id="sex-m" data-sex="m">Männlich</button>
-        <button type="button" class="role-btn" id="sex-f" data-sex="f">Weiblich</button>
-        <button type="button" class="role-btn" id="sex-d" data-sex="d">Divers</button>
+      <div class="role-group" id="grp-sex">
+        <button type="button" class="role-btn" id="sex-m" data-sex="m" onclick="setSex('m')">Männlich</button>
+        <button type="button" class="role-btn" id="sex-f" data-sex="f" onclick="setSex('f')">Weiblich</button>
+        <button type="button" class="role-btn" id="sex-d" data-sex="d" onclick="setSex('d')">Divers</button>
       </div>
     </div>
     <div>
       <label class="field-label">Ihre Rolle</label>
-      <div class="role-group">
-        <button type="button" class="role-btn" id="role-parent" data-role="parent">Elternteil</button>
-        <button type="button" class="role-btn" id="role-pro" data-role="pro">Fachkraft</button>
+      <div class="role-group" id="grp-role">
+        <button type="button" class="role-btn" id="role-parent" data-role="parent" onclick="setRole('parent')">Elternteil</button>
+        <button type="button" class="role-btn" id="role-pro" data-role="pro" onclick="setRole('pro')">Fachkraft</button>
       </div>
     </div>
   </div>
-  <button type="button" class="intake-start-btn" id="start-btn" disabled>
+  <button type="button" class="intake-start-btn" id="start-btn" disabled onclick="startQuiz()">
     Fragebogen starten →
   </button>
   <div id="intake-status" style="margin-top:12px;font-size:10px;letter-spacing:0.06em;color:var(--muted);text-align:center;line-height:1.6;">
@@ -785,71 +791,50 @@ function getActiveQuestions(qs, band) {
 function qKey(type, idx) { return `${type}-${idx}`; }
 
 // ── INTAKE ──
+// Alle Handler sind direkte onclick/oninput/onchange-Attribute im HTML.
+// Kein addEventListener, keine Delegation, keine Initialisierung.
+
 function onAgeChange() {
-  const v = parseInt(document.getElementById('child-age').value);
+  var v = parseInt(document.getElementById('child-age').value, 10);
   childAge = (v >= 2 && v <= 8) ? v : null;
-  const disp = document.getElementById('age-display');
-  const band = document.getElementById('age-band');
-  if (childAge) {
-    disp.textContent = `${childAge} Jahre`;
-    band.textContent = ageBandLabel(childAge);
-  } else {
-    disp.textContent = '';
-    band.textContent = '';
-  }
+  document.getElementById('age-display').textContent = childAge ? childAge + ' Jahre' : '';
+  document.getElementById('age-band').textContent    = childAge ? ageBandLabel(childAge) : '';
+  checkIntake();
+}
+
+function setSex(s) {
+  childSex = s;
+  document.getElementById('sex-m').classList.remove('active');
+  document.getElementById('sex-f').classList.remove('active');
+  document.getElementById('sex-d').classList.remove('active');
+  document.getElementById('sex-' + s).classList.add('active');
+  checkIntake();
+}
+
+function setRole(r) {
+  raterRole = r;
+  document.getElementById('role-parent').classList.remove('active');
+  document.getElementById('role-pro').classList.remove('active');
+  document.getElementById('role-' + r).classList.add('active');
   checkIntake();
 }
 
 function checkIntake() {
-  childName = document.getElementById('child-name').value.trim();
-  // Always sync age from DOM — guards against iOS Safari where 'input' may not fire
-  const ageVal = parseInt(document.getElementById('child-age').value, 10);
-  childAge = (ageVal >= 2 && ageVal <= 8) ? ageVal : null;
-  const ok = childName && childAge && childSex && raterRole;
+  childName = (document.getElementById('child-name').value || '').trim();
+  var ageVal = parseInt(document.getElementById('child-age').value, 10);
+  if (ageVal >= 2 && ageVal <= 8) childAge = ageVal;
+  var ok = childName && childAge && childSex && raterRole;
   document.getElementById('start-btn').disabled = !ok;
-
-  // Live status feedback
-  const status = document.getElementById('intake-status');
-  if (status) {
-    const check = v => v ? '✓' : '○';
-    if (ok) {
-      status.style.color = 'var(--adhs)';
-      status.textContent = 'Alle Angaben vollständig — du kannst starten.';
-    } else {
-      status.style.color = 'var(--muted)';
-      status.textContent =
-        `${check(childName)} Name   ${check(childAge)} Alter   ${check(childSex)} Geschlecht   ${check(raterRole)} Rolle`;
-    }
+  var status = document.getElementById('intake-status');
+  if (!status) return;
+  var c = function(v) { return v ? '✓' : '○'; };
+  if (ok) {
+    status.style.color = 'var(--adhs)';
+    status.textContent = 'Alle Angaben vollständig — du kannst starten.';
+  } else {
+    status.style.color = 'var(--muted)';
+    status.textContent = c(childName) + ' Name   ' + c(childAge) + ' Alter   ' + c(childSex) + ' Geschlecht   ' + c(raterRole) + ' Rolle';
   }
-}
-
-function wireIntake() {
-  // Direct listeners on each button — delegation on a div is unreliable on iOS Safari.
-  // Active-toggling via closest('.role-group') keeps sex and role groups isolated.
-  document.querySelectorAll('#intake button[data-sex], #intake button[data-role]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      const group = this.closest('.role-group');
-      if (group) group.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      if (this.dataset.sex)  childSex  = this.dataset.sex;
-      if (this.dataset.role) raterRole = this.dataset.role;
-      checkIntake();
-    });
-  });
-
-  const startBtn = document.getElementById('start-btn');
-  if (startBtn) startBtn.addEventListener('click', function() { if (!this.disabled) startQuiz(); });
-
-  // iOS Safari fires 'change' instead of 'input' on type=number — listen to both.
-  const ageInput  = document.getElementById('child-age');
-  const nameInput = document.getElementById('child-name');
-  if (ageInput)  { ageInput.addEventListener('input',  onAgeChange); ageInput.addEventListener('change', onAgeChange); }
-  if (nameInput) { nameInput.addEventListener('input', checkIntake); }
-}
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', wireIntake);
-} else {
-  wireIntake();
 }
 
 // ── BUILD QUIZ ──
