@@ -800,22 +800,11 @@ function onAgeChange() {
   checkIntake();
 }
 
-function setSex(s) {
-  childSex = s;
-  ['m','f','d'].forEach(x => document.getElementById(`sex-${x}`).classList.remove('active'));
-  document.getElementById(`sex-${s}`).classList.add('active');
-  checkIntake();
-}
-
-function setRole(r) {
-  raterRole = r;
-  ['parent','pro'].forEach(x => document.getElementById(`role-${x}`).classList.remove('active'));
-  document.getElementById(`role-${r}`).classList.add('active');
-  checkIntake();
-}
-
 function checkIntake() {
   childName = document.getElementById('child-name').value.trim();
+  // Always sync age from DOM — guards against iOS Safari where 'input' may not fire
+  const ageVal = parseInt(document.getElementById('child-age').value, 10);
+  childAge = (ageVal >= 2 && ageVal <= 8) ? ageVal : null;
   const ok = childName && childAge && childSex && raterRole;
   document.getElementById('start-btn').disabled = !ok;
 
@@ -834,26 +823,28 @@ function checkIntake() {
   }
 }
 
-// Robust event wiring via delegation on a stable parent.
-// Delegation survives any DOM timing issue and cannot be "reset" by re-binding.
 function wireIntake() {
-  const intake = document.getElementById('intake');
-  if (!intake) return;
-
-  // Single delegated click handler for ALL intake buttons
-  intake.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    if (btn.dataset.sex)  { setSex(btn.dataset.sex); }
-    else if (btn.dataset.role) { setRole(btn.dataset.role); }
-    else if (btn.id === 'start-btn' && !btn.disabled) { startQuiz(); }
+  // Direct listeners on each button — delegation on a div is unreliable on iOS Safari.
+  // Active-toggling via closest('.role-group') keeps sex and role groups isolated.
+  document.querySelectorAll('#intake button[data-sex], #intake button[data-role]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const group = this.closest('.role-group');
+      if (group) group.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      if (this.dataset.sex)  childSex  = this.dataset.sex;
+      if (this.dataset.role) raterRole = this.dataset.role;
+      checkIntake();
+    });
   });
 
-  // Single delegated input handler for the text/number fields
-  intake.addEventListener('input', (e) => {
-    if (e.target.id === 'child-age') onAgeChange();
-    else if (e.target.id === 'child-name') checkIntake();
-  });
+  const startBtn = document.getElementById('start-btn');
+  if (startBtn) startBtn.addEventListener('click', function() { if (!this.disabled) startQuiz(); });
+
+  // iOS Safari fires 'change' instead of 'input' on type=number — listen to both.
+  const ageInput  = document.getElementById('child-age');
+  const nameInput = document.getElementById('child-name');
+  if (ageInput)  { ageInput.addEventListener('input',  onAgeChange); ageInput.addEventListener('change', onAgeChange); }
+  if (nameInput) { nameInput.addEventListener('input', checkIntake); }
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', wireIntake);
